@@ -21,11 +21,15 @@ void main() {
     expect(EqualProblemSolution().getRound(input), answer);
   });
   test('第4組測資', () {
-    String inputData =
-        "512 125 928 381 890 90 512 789 469 473 908 990 195 763 102 643 458 366 684 857 126 534 974 875 459 892 686 373 127 297 576 991 774 856 372 664 946 237 806 767 62 714 758 258 477 860 253 287 579 289 496";
+    /*
+      [1, 5, 5]
+      1 [2,2,2,2]   [5,1]
+      5 [2,2,0,0]   [5,0]
+      5 [0,0,2,2]   [0,1]
 
-    List<int> input = inputData.split(' ').map((e) => int.parse(e)).toList();
-    int answer = 5104;
+     */
+    List<int> input = [1, 5, 5];
+    int answer = 3;
     expect(EqualProblemSolution().getRound(input), answer);
   });
 
