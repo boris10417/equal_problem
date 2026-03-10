@@ -1,7 +1,3 @@
-
-
-https://www.hackerrank.com/challenges/lilys-homework/problem
-
 # 題目
 
 https://www.hackerrank.com/challenges/equal/problem
