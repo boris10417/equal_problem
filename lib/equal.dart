@@ -1,46 +1,17 @@
 /*  
   目的是要讓陣列中的數字全部相同，每次的移動，都要同時讓所有人前進，只有一個人會不能前進
 
-  ## 每一輪中，要讓哪一個數字不動
-  優先讓 最大值 停步
-
-  ## min + step - max 的差量的優先度選擇
-
-  1. = 0 的差量優先
-  2.若無1.，則 < 0 的最大值 的差量優先
-  3.若無(1.且 2.)，則 > 0 的最小值
-
+  由於終點最終會是相同的點 且 所有人往右 一個人不動，其實等價於所有人不動 一個人往左移動
   
-
-
+  因此追求的目標變成，分別找出每個數字往左移動至終點，最少的輪次
+  
+  由於最大移動步數為5，因此可能的終點位置為:最小值 ~ 最小值 - 4 (最小值-5必定會多一步，-6之後的步數只會更多，不用算)
 
  */
 
 class EqualProblemSolution {
-  ///可能的步數
-  List<int> availableStep = [5, 2, 1];
 
-  ///取得可能的步數
-  int getStep(int difference) {
-    for (var step in availableStep) {
-      if (difference >= step) {
-        return step;
-      }
-    }
-    throw "找不到可用step";
-  }
-
-  int getMax(List<int> input) {
-    
-    int max = input[0];
-    for (var i = 1; i < input.length; i++) {
-      if (input[i] > max) {
-        max = input[i];
-      }
-    }
-    return max;
-  }
-
+  ///取得最小值
   int getMin(List<int> input) {
     int min = input[0];
     for (var i = 1; i < input.length; i++) {
@@ -51,86 +22,55 @@ class EqualProblemSolution {
     return min;
   }
 
-  double getMinOfDouble(List<double> input) {
-    double min = input[0];
-    for (var i = 1; i < input.length; i++) {
-      if (input[i] < min) {
-        min = input[i];
-      }
-    }
-    return min;
-  }
-
+  ///取得所有數字的總輪次
   int getRound(List<int> input) {
     List<int> data = input.toList();
-    int counter = 0;
-    
-    while (data.toSet().length != 1) {
-      
-      // if (counter > 10605) {
-      //   //*除錯用 為了避免無限迴圈的中止點
-      //   throw "計算超出答案上限";
-      // }
 
+    //取出最小值
+    int min = getMin(data);
 
-      //從小排到大
-      data.sort();
+    // min ~ min - 4的所有輪次可能
+    List<int> sumOfRounds = [];
 
-      //取出最大值
-      int max = data.last;
-      int min = data.first;
-
-      //取出最好的step
-      int step = getBetterStep(min, max);
-
-      //移動所有人並暫停最大值
-      for (var i = 0; i < data.length - 1; i++) {
-        data[i] += step;
+    //所有須計算的終點 min ~ min - 4
+    //ps: 因為最大的步數 = 5，所以min - 5只會比min固定多一步，因此之後的都不用算了
+    for (var i = 0; i < 5; i++) {
+      int sumOfRound = 0;
+      int endPoint = min - i;
+      for (var j = 0; j < data.length; j++) {
+        //取得所有數字到終點的輪次總和
+        sumOfRound += getRoundOfNumber(data[j], endPoint);
       }
-      counter++;
+      sumOfRounds.add(sumOfRound);
     }
 
-    return counter;
+    //取出min ~ min - 4的所有可能輪次的最小值
+    return getMin(sumOfRounds);
   }
 
-  //取出移動後，差量最小者
-  int getBetterStep(int min, int max) {
-    List<int> differences = List.generate(availableStep.length, (index) {
-      //原版
-      // return (min + availableStep[index] - max).abs();
+  ///輸入一個數字找到輪次總和
+  int getRoundOfNumber(int number, int endPoint) {
+    int countOfFive = 0;
+    int countOfTwo = 0;
+    int countOfOne = 0;
+    int remainder = number - endPoint;
+    if (remainder >= 5) {
+      //走了幾個5
+      countOfFive = remainder ~/ 5;
+    }
+    remainder = remainder.remainder(5); 
 
-      /*優先順序
-        = 0
-        < 0 的最大值
-        > 0 的最小值
-       */
-      return (min + availableStep[index] - max);
-    });
+    if (remainder >= 2) {
+      //走了幾個2
+      countOfTwo = remainder ~/ 2; 
+    }
+    remainder = remainder.remainder(2); 
 
-    // int index = differences.indexOf(getMin(differences));
-
-    int index = differences.indexOf(getBestDifference(differences));
-    return availableStep[index];
-  }
-  //取得最適合的差量
-  int getBestDifference(List<int> differences) {
-    /*優先順序
-        = 0
-        < 0 的最大值
-        > 0 的最小值
-    */
-    if (differences.any((e) => e == 0)) {
-      return 0;
+    if (remainder == 1) {
+      //走了1個1
+      countOfOne = 1;
     }
 
-    final negativeList = differences.where((e)=>e<0).toList();
-
-    if (negativeList.isNotEmpty) {
-      //若存在負數至少一個
-      return getMax(differences.where((e)=>e<0).toList());
-    }
-
-    //若都是正數
-    return getMin(differences);
+    return countOfFive + countOfTwo + countOfOne;
   }
 }
