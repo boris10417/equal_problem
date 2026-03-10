@@ -1,1 +1,21 @@
-# equal_problem
+
+
+https://www.hackerrank.com/challenges/lilys-homework/problem
+
+# 題目
+
+https://www.hackerrank.com/challenges/equal/problem
+
+
+目的是要讓陣列中的數字全部相同，每次的移動，都要同時讓所有人前進，只有一個人會不能前進
+
+## 演算法
+
+## 每一輪中，要讓哪一個數字不動
+優先讓 最大值 停步
+
+## min + step - max 的差量的優先度選擇
+
+1. = 0 的差量優先
+2. 若無1.，則 < 0 的最大值 的差量優先
+3. 若無(1.且 2.)，則 > 0 的最小值 的差量優先
